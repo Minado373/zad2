@@ -1,22 +1,33 @@
 (function () {
-  const draggableElement = document.getElementById("ex3_element");
-  const containerOne = document.getElementById("ex3_one");
-  const containerTwo = document.getElementById("ex3_two");
+  const containersHTML = [
+    document.getElementById("ex3_one"),
+    document.getElementById("ex3_two"),
+  ];
 
   function dragstartHandler(ev) {
-    ev.dataTransfer.setData("text/html", ev.target.outerHTML);
+    const draggable = ev.target.closest("#ex3_element");
+    if (!draggable) return;
+    ev.dataTransfer.setData("text/html", draggable.outerHTML);
   }
 
-  draggableElement.addEventListener("dragstart", dragstartHandler);
+  function dropHandler(ev) {
+    ev.preventDefault();
+    const data = ev.dataTransfer.getData("text/html");
+    ev.target.innerHTML = data;
+  }
 
-  containerTwo.addEventListener("dragover", (e) => {
-    e.preventDefault();
-  });
-
-  containerTwo.addEventListener("drop", (e) => {
-    e.preventDefault();
-    const data = e.dataTransfer.getData("text/html");
-    e.target.innerHTML = data;
-    containerOne.innerHTML = "";
+  containersHTML.forEach((c, i) => {
+    c.addEventListener("dragstart", dragstartHandler);
+    c.addEventListener("dragover", (e) => {
+      e.preventDefault();
+    });
+    c.addEventListener("drop", (e) => {
+      dropHandler(e);
+      if (i === 0) {
+        containersHTML[1].innerHTML = "";
+      } else {
+        containersHTML[0].innerHTML = "";
+      }
+    });
   });
 })();
